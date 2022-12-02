@@ -10,43 +10,6 @@ import { If } from "../utils/If.js";
 
 // Or off screen canvas blending 2 precomposed layers?
 
-const PixiContainerOld = withPixiApp((props, ref) => {
-	console.log("ref for container", ref);
-
-	const [mounted, setMounted] = useState(false);
-	const containerRef = useRef();
-
-	// Attach our container ref to the ref property
-	useImperativeHandle(ref, () => containerRef.current);
-
-	useMount(() => {
-		let c = new PIXI.Container();
-		props.root.addChild(c);
-		containerRef.current = c;
-
-		setMounted(true);
-	});
-
-	useUnmount(() => {
-		let c = containerRef.current;
-		c.children.forEach((child) => {
-			c.removeChild(child);
-		});
-		c.parent.removeChild(c);
-		containerRef.current = null;
-	});
-
-	return (
-		<>
-			<If cond={mounted}>
-				<ContainerChildren root={containerRef.current}>
-					{props.children}
-				</ContainerChildren>
-			</If>
-		</>
-	);
-});
-
 const ContainerChildren = (props) => {
 	var children = React.Children.map(props.children, (child, ix) => {
 		if (!child) return null;
@@ -70,6 +33,7 @@ function PixiContainer(props, ref) {
 
 	useMount(() => {
 		_ref.current.sortableChildren = true;
+		_ref.current.filters = [];
 		if (props.root) props.root.addChild(_ref.current);
 		setMounted(true);
 	});

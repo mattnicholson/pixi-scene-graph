@@ -39,6 +39,8 @@ function PixiPreCompose(props, ref) {
 		const renderTexture = PIXI.RenderTexture.create({
 			width: 1080,
 			height: 1080,
+			resolution: 2,
+			//multisample: PIXI.MSAA_QUALITY.LOW,
 		});
 
 		let texture = renderTexture;

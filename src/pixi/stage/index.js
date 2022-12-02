@@ -30,6 +30,8 @@ const Stage = (props) => {
 			width: 1080,
 			height: 1080,
 			backgroundAlpha: 0,
+			antialias: true,
+			resolution: 2,
 		});
 		// Add it to the div
 		el.current.appendChild(app.view);
@@ -70,18 +72,27 @@ const Stage = (props) => {
 		const api = {
 			downloadFrame: () => {
 				(async () => {
-					const dataUri = await app.renderer.extract.base64(
+					/*const dataUri = await app.renderer.extract.base64(
 						app.stage,
 						"image/png"
+					);*/
+
+					app.render();
+					let blob = app.view.toBlob(
+						(blob) => {
+							let url = URL.createObjectURL(blob);
+
+							let link = document.createElement("a");
+							link.href = url;
+							link.download = `${Date.now()}.png`;
+							link.innerHTML = "Download";
+							link.id = "download";
+
+							link.click();
+						},
+						"image/png",
+						1
 					);
-
-					let link = document.createElement("a");
-					link.href = dataUri;
-					link.download = `${Date.now()}.png`;
-					link.innerHTML = "Download";
-					link.id = "download";
-
-					link.click();
 				})();
 			},
 			setComp: (key, value) => {
