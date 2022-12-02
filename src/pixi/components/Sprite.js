@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useImperativeHandle } from "react";
 import * as PIXI from "pixi.js";
 
 import { withPixiApp } from "../stage/provider";
@@ -7,18 +7,35 @@ import { If } from "../utils/If.js";
 
 const pixel = "/pixel.png";
 
-const Sprite = withPixiApp((props) => {
-	const spriteRef = useRef();
+function PixiSprite(props, ref) {
+	const _ref = useRef();
 	const [loaded, setLoaded] = useState(false);
+
+	useImperativeHandle(ref, () => {
+		return _ref.current;
+	});
+
 	useMount(() => {
+		let texture;
 		let tex = props.image ? props.image : pixel;
 
-		const texture = PIXI.Texture.from(tex);
+		if (!props.hasOwnProperty("texture")) {
+			texture = PIXI.Texture.from(tex);
+		} else {
+			texture = props.texture;
+		}
 
 		let s = new PIXI.Sprite(texture);
 
+		// Z index set initally based on node order, but can be set explicitly with zIndex prop
+		s.zIndex = props.hasOwnProperty("index") ? props.index : 0;
+
+		if (props.hasOwnProperty("zIndex")) {
+			s.zIndex = props.zIndex;
+		}
+
 		props.root.addChild(s);
-		spriteRef.current = s;
+		_ref.current = s;
 
 		let i = new Image();
 		i.onload = function () {
@@ -28,54 +45,75 @@ const Sprite = withPixiApp((props) => {
 	});
 	// Unmount
 	useUnmount(() => {
-		let s = spriteRef.current;
+		let s = _ref.current;
 		if (s && s.parent) {
 			s.parent.removeChild(s);
 			s.destroy({ children: true, texture: true });
 		}
-		spriteRef.current = null;
+		_ref.current = null;
 	});
 
-	// Texture updating from image prop
+	// Texture updating from image prop (and no texture ref specified)
 	useEffect(() => {
 		if (!loaded) return;
+		if (props.hasOwnProperty("texture")) return;
 		const texture = props.image ? PIXI.Texture.from(props.image) : null;
-		spriteRef.current.texture = texture;
+		_ref.current.texture = texture;
 	}, [loaded, props.image]);
 
 	// Scale updater
 	useEffect(() => {
 		let scale = props.hasOwnProperty("scale") ? props.scale : 1;
-		spriteRef.current.scale.set(scale);
+		_ref.current.scale.set(scale);
 	}, [props.scale]);
 
 	// Width / height
 	useEffect(() => {
 		if (!loaded) return;
-		if (props.hasOwnProperty("width"))
-			spriteRef.current.width = props.width;
-		if (props.hasOwnProperty("height"))
-			spriteRef.current.height = props.width;
+		if (props.hasOwnProperty("width")) {
+			_ref.current.width = props.width;
+		}
+		if (props.hasOwnProperty("height")) {
+			_ref.current.height = props.height;
+		}
 	}, [loaded, props.width, props.height]);
 
 	// Tint
 	useEffect(() => {
-		spriteRef.current.tint = props.tint ? props.tint : 0xffffff;
+		_ref.current.tint = props.tint ? props.tint : 0xffffff;
 	}, [props.tint]);
+
+	// zIndex
+	useEffect(() => {
+		if (props.hasOwnProperty("index")) {
+			_ref.current.zIndex = props.index;
+		}
+		if (props.hasOwnProperty("zIndex")) {
+			_ref.current.zIndex = props.zIndex;
+		}
+	}, [props.index, props.zIndex]);
+
+	// Texture ref changed
+	useEffect(() => {
+		if (!loaded) return;
+		_ref.current.texture = props.texture;
+	}, [props.texture]);
 
 	// Mask
 	useEffect(() => {
 		if (!loaded) return;
 		if (props.hasOwnProperty("mask")) {
-			spriteRef.current.parent.mask = spriteRef.current;
+			_ref.current.parent.mask = _ref.current;
 		} else {
-			if (spriteRef.current.parent.mask === spriteRef.current) {
-				spriteRef.current.parent.mask = null;
+			if (_ref.current.parent.mask === _ref.current) {
+				_ref.current.parent.mask = null;
 			}
 		}
 	}, [loaded, props.mask]);
 
 	return <></>;
-});
+}
+
+const Sprite = withPixiApp(React.forwardRef(PixiSprite));
 
 export { Sprite };

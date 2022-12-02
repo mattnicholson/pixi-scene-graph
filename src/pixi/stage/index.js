@@ -12,7 +12,12 @@ const Stage = (props) => {
 	const [mounted, setMounted] = useState(false);
 	const el = useRef(null);
 	const bg = useRef(null);
+
 	const appRef = useRef(null);
+	const apiRef = useRef(null);
+
+	const comps = useRef({});
+
 	const root = useRef(null);
 	const hasInit = useRef(null);
 
@@ -48,6 +53,7 @@ const Stage = (props) => {
 		pxMask.height = 1080;
 		BG.mask = pxMask;
 
+		BG.id = "__root";
 		BG.addChild(px);
 		BG.addChild(pxMask);
 
@@ -78,7 +84,16 @@ const Stage = (props) => {
 					link.click();
 				})();
 			},
+			setComp: (key, value) => {
+				comps.current[key] = value;
+			},
+			getComp: (key) => {
+				return comps.current[key];
+			},
 		};
+
+		// Store the api in context
+		apiRef.current = api;
 
 		if (props.onInit) {
 			props.onInit(api);
@@ -101,7 +116,11 @@ const Stage = (props) => {
 		<div ref={el}>
 			<If cond={mounted}>
 				<AppProvider
-					value={{ app: appRef.current, root: root.current }}
+					value={{
+						app: appRef.current,
+						root: root.current,
+						api: apiRef.current,
+					}}
 				>
 					{props.children}
 				</AppProvider>

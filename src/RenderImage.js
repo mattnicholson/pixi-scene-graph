@@ -8,9 +8,14 @@ import { AdjustmentFilter } from "@pixi/filter-adjustment";
 import { UploadOutlined, SaveOutlined } from "@ant-design/icons";
 import { FloatButton } from "antd";
 
+import { RenderPixi } from "./RenderPixi.js";
+
 import { Stage } from "./pixi/stage/";
 import { Sprite } from "./pixi/components/Sprite.js";
 import { Container } from "./pixi/components/Container.js";
+
+import { PreCompose } from "./pixi/components/PreCompose.js";
+import { Composition } from "./pixi/components/Composition.js";
 
 const preload = (src) =>
   new Promise(function (resolve, reject) {
@@ -174,35 +179,8 @@ const Pixi = (props) => {
   return <div ref={el} />;
 };
 
-export const RenderImage = ({ src, ...rest }) => {
-  const apiRef = useRef();
-
-  return (
-    <>
-      <FloatButton
-        style={{ right: 94 }}
-        onClick={() => apiRef.current.downloadFrame()}
-        icon={<SaveOutlined />}
-      />
-      <Stage
-        debug={false}
-        onInit={(api) => {
-          apiRef.current = api;
-        }}
-      >
-        <Container>
-          <Sprite
-            width={1080}
-            height={1080}
-            image={"/pixel-solid.png"}
-            tint={0xeec7ac}
-          />
-          {src && <Sprite image={src} />}
-          <Sprite mask image={"/pill-white.png"} />
-        </Container>
-      </Stage>
-    </>
-  );
+export const RenderImage = (props) => {
+  return <RenderPixi {...props} />;
 };
 
 export const RenderImageOld = ({ src, ...rest }) => {
