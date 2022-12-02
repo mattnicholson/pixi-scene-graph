@@ -1,0 +1,17 @@
+html,
+body {
+  margin: 0;
+}
+.App {
+  font-family: sans-serif;
+  text-align: center;
+}
+
+#drop > span,
+#drop .ant-upload {
+  display: block;
+}
+
+#view canvas {
+  width: 100%;
+}
