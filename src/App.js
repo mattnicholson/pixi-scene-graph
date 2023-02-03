@@ -9,6 +9,8 @@ import "antd/dist/reset.css";
 import { FloatButton } from "antd";
 import "./styles.css";
 
+import FPSStats from "react-fps-stats";
+
 const props: UploadProps = {
   multiple: true,
   onDrop(e) {
@@ -52,6 +54,11 @@ export default function App() {
                   />
                 </div>
               </div>
+              <div style={{ padding: "10vmax" }}>
+                <div id="viewb" style={{ position: "relative" }}>
+                  <RenderImage blur={true} />
+                </div>
+              </div>
             </If>
             <If cond={downloadUrl && 0}>
               <img
@@ -83,6 +90,90 @@ export default function App() {
             <FloatButton icon={<UploadOutlined />} />
           </CanvasFileUploader>
         </FloatButton.Group>
+      </div>
+      <FPSStats />
+      <div style={{ position: "relative", zIndex: 5 }}>
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
+        <div
+          style={{
+            height: "50vw",
+            background: "yellow",
+            width: "70%",
+            margin: "10vmax",
+            borderRadius: "10%",
+          }}
+        />
       </div>
     </div>
   );

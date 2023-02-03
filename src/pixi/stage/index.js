@@ -31,8 +31,9 @@ const Stage = (props) => {
 			height: 1080,
 			backgroundAlpha: 0,
 			antialias: true,
-			resolution: 2,
+			resolution: window.innerWidth / 1080,
 		});
+
 		// Add it to the div
 		el.current.appendChild(app.view);
 		// Create a background
@@ -70,6 +71,8 @@ const Stage = (props) => {
 		window.__root = BG;
 
 		const api = {
+			app: app,
+			renderer: app.renderer,
 			downloadFrame: () => {
 				(async () => {
 					/*const dataUri = await app.renderer.extract.base64(
