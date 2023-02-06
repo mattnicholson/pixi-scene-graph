@@ -19,7 +19,7 @@ import { Composition } from "./pixi/components/Composition.js";
 
 import { Filter } from "./pixi/filters/Filter.js";
 
-export const RenderPixi = ({ src, ...rest }) => {
+export const RenderPixi = ({ src, ...props }) => {
   const [hasDisplacement, setHasDisplacement] = useState(false);
 
   const ctxRef = useRef();
@@ -67,11 +67,15 @@ export const RenderPixi = ({ src, ...rest }) => {
     const copyCanvas = (time) => {
       //console.log("render");
       requestAnimationFrame(copyCanvas);
-
+      if (maskRef.current) {
+        maskRef.current.anchor.set(0.5);
+        maskRef.current.x = 1080 / 2;
+        maskRef.current.y = 1080 / 2;
+        maskRef.current.scale.set(1 + Math.sin(time * 0.002));
+      }
       if (bubble.current) {
         //i++;
         //maskRef.current.anchor.set(0.5);
-        maskRef.current.scale.set(1 + Math.sin(time * 0.004));
 
         bubble.current.anchor.set(0.5);
         bubble.current.x = 1080 / 2;
@@ -92,44 +96,59 @@ export const RenderPixi = ({ src, ...rest }) => {
 
   return (
     <>
-      {/*<div className="ctx-wrapper">
-        <canvas
-          ref={ctxRef}
-          className="ctx"
-          id="ctx1"
-          width="2160"
-          height="2160"
-        ></canvas>
-      </div>*/}
-      <div id="render" ref={el}>
-        <FloatButton
-          style={{ right: 94 }}
-          onClick={() => apiRef.current.downloadFrame()}
-          icon={<SaveOutlined />}
-        />
+      <div ref={el}>
         <Stage
           debug={false}
           onInit={(api) => {
             apiRef.current = api;
           }}
         >
-          <PreCompose name="comp1">
+          {/*<PreCompose name="comp1">
+            <Container>
+              <Sprite image={"/shapes/shape-1.png"} />
+              <Sprite mask image={"/pill-white.png"} />
+            </Container>
+          </PreCompose>*/}
+
+          <Container>
             <Container>
               <Sprite
                 width={1080}
                 height={1080}
                 image={"/pixel-solid.png"}
-                tint={0xeec7ac}
+                tint={props.mask ? 0x00ff00 : 0x54b9f1}
               />
-              {src && <Sprite image={src} />}
-              <Sprite mask image={"/pill-white.png"} />
-            </Container>
-          </PreCompose>
+              <Sprite
+                image={"/shapes/shape-1.png"}
+                tint={props.mask && 0x00ff00}
+              />
+              <Sprite
+                image={"/shapes/shape-2.png"}
+                tint={props.mask && 0x00ff00}
+              />
+              <Sprite
+                image={"/shapes/shape-3.png"}
+                tint={props.mask && 0x00ff00}
+              />
+              <Sprite
+                image={"/shapes/shape-4.png"}
+                tint={props.mask && 0x00ff00}
+              />
+              <Sprite
+                image={"/shapes/shape-5.png"}
+                tint={props.mask && 0x00ff00}
+              />
+              <Sprite
+                image={"/shapes/shape-6.png"}
+                tint={props.mask && 0x00ff00}
+              />
+              <Sprite
+                image={"/shapes/shape-7.png"}
+                tint={props.mask && 0x00ff00}
+              />
 
-          <Container>
-            <Container>
-              <Composition from="comp1" scale={1} tint={0xffe45b} />
-              <Composition from="comp1" scale={0.5} tint={0x00ff00} />
+              {/*<Composition  from="comp1" scale={1} />*/}
+              {/*<Composition from="comp1" scale={0.5} tint={0x00ff00} />
               <Composition
                 from="comp1"
                 scale={0.2}
@@ -139,7 +158,9 @@ export const RenderPixi = ({ src, ...rest }) => {
                     // Ref callback will provide the PIXI.Sprite instance
                   }
                 }}
-              />
+              />*/}
+
+              <Filter type="noise" noise={0.1} seed={2} />
 
               {/* (
                 <Filter
@@ -150,7 +171,7 @@ export const RenderPixi = ({ src, ...rest }) => {
                   kernelSize={15}
                   ref={blurRef}
                 />
-              )*/}
+              )
 
               {hasDisplacement && (
                 <Filter
@@ -160,7 +181,7 @@ export const RenderPixi = ({ src, ...rest }) => {
                 />
               )}
 
-              <Filter type="noise" noise={0.1} seed={2} />
+              
 
               <Sprite
                 width={500 * 0.625}
@@ -173,8 +194,9 @@ export const RenderPixi = ({ src, ...rest }) => {
                 }}
                 id={"displacement"}
                 image={"/bubbleDisplacement.png"}
-              />
+              />*/}
             </Container>
+            {/*
             <Sprite
               width={500}
               height={500}
@@ -186,7 +208,18 @@ export const RenderPixi = ({ src, ...rest }) => {
               id={"sprite"}
               image={"/bubble256.png"}
             />
-            <Sprite ref={maskRef} mask image={"/pill-white.png"} />
+            <Sprite ref={maskRef} mask image={"/pill-white.png"} />*/}
+
+            {props.mask && (
+              <Sprite
+                ref={maskRef}
+                mask
+                image={"/pill-white.png"}
+                center
+                scale={0.1}
+                anchor={0.5}
+              />
+            )}
           </Container>
         </Stage>
       </div>

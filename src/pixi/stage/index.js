@@ -26,12 +26,15 @@ const Stage = (props) => {
 
 	useMount(() => {
 		// Set up a pixi app
+		let longestSide = Math.max(window.innerHeight, window.innerWidth);
+		//window.devicePixelRatio
+		let resolutionMultiplier = 1;
 		const app = new PIXI.Application({
 			width: 1080,
 			height: 1080,
 			backgroundAlpha: 0,
 			antialias: true,
-			resolution: window.innerWidth / 1080,
+			resolution: (longestSide / 1080) * resolutionMultiplier,
 		});
 
 		// Add it to the div

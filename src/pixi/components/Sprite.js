@@ -34,6 +34,15 @@ function PixiSprite(props, ref) {
 			s.zIndex = props.zIndex;
 		}
 
+		if (props.hasOwnProperty("anchor")) {
+			s.anchor.set(props.anchor);
+		}
+
+		if (props.hasOwnProperty("center")) {
+			s.x = 1080 / 2;
+			s.y = 1080 / 2;
+		}
+
 		props.root.addChild(s);
 		_ref.current = s;
 
