@@ -43,6 +43,14 @@ function PixiSprite(props, ref) {
 			s.y = 1080 / 2;
 		}
 
+		if (props.hasOwnProperty("x")) {
+			s.x = props.x;
+		}
+
+		if (props.hasOwnProperty("y")) {
+			s.y = props.y;
+		}
+
 		props.root.addChild(s);
 		_ref.current = s;
 
