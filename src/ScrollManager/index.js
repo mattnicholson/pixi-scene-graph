@@ -51,5 +51,9 @@ export const ScrollElement = ({
 		if (onTick) global.SCROLLMANAGER.removeTickCallback(tickRef.current);
 	});
 
-	return <div ref={el}>{children}</div>;
+	return (
+		<div id={rest.id} ref={el}>
+			{children}
+		</div>
+	);
 };

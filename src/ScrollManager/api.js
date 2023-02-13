@@ -9,9 +9,29 @@ class ScrollManager {
 	settings = {};
 
 	// Array of items being tracked for progress & visibility
-	elements = []; // [{ref:<html element>,in:0.2,out:0.3,customIn:0.1,customOut:0.5,offsets, props: {customSettings,onProgress,onVisible,onInvisible}}] (calculates the in and out marker for each element)
+	elements = []; // [{ref:<html element>,in:0.2,out:0.3,state:{isVisible,isCustomVisible ...},customIn:0.1,customOut:0.5,offsets, props: {customSettings,onProgress,onVisible,onInvisible}}] (calculates the in and out marker for each element)
 
 	ticker = null;
+	tickCallbacks = [];
+
+	listeners = []; // [{type:'label',callback:()=>{}}]
+	on = (label, callback) => {
+		let len = this.listeners.push({ type: label, callback: callback });
+		let key = len - 1;
+
+		return key;
+	};
+	trigger = (label, payload) => {
+		this.listeners
+			.filter((l) => l.type === label)
+			.forEach((l) => {
+				let callback = l.callback;
+				callback(payload, this.state);
+			});
+	};
+	removeListener = (key) => {
+		this.listeners.splice(key, 1);
+	};
 
 	// Main calaculations
 	state = {
@@ -55,7 +75,7 @@ class ScrollManager {
 			stop: ticker[1],
 		};
 	};
-	tickCallbacks = [];
+
 	addTickCallback = (fn) => {
 		let len = this.tickCallbacks.push(fn);
 		let key = len - 1;
@@ -109,7 +129,7 @@ class ScrollManager {
 			// rather than technically visible
 
 			// Custom values
-			if (el.onCustomProgress) {
+			if (el.customSettings) {
 				let customViewportProgress = {
 					progress: {
 						is: progressIs,
@@ -150,15 +170,28 @@ class ScrollManager {
 		);
 
 		// Is visible?
-		let wasVisible = elProgressWas >= 0 && elProgressWas <= 1;
+		//let wasVisible = elProgressWas >= 0 && elProgressWas <= 1;
+		let wasVisible = callbackObject.state[`is${callbackLabel}Visible`];
 		let isVisible = elProgressIs >= 0 && elProgressIs <= 1;
 
 		let visibilityChanged = isVisible !== wasVisible;
 
+		// Update the state to current visibility
+		callbackObject.state[`is${callbackLabel}Visible`] = isVisible;
+
+		let lastLogged = callbackObject.state[`last${callbackLabel}Progress`];
 		let scrolldata = {
 			ref: callbackObject.ref,
 			progress: elProgressIs,
+			travelled: Math.round(callbackObject.distance * elProgressIs),
 		};
+
+		// Sometimes the request animation frame fires when the item is now no longer visible
+		// Needs to trigger the final out of bounds progress call so that progres handlers can deal with a true final value
+		let needsFinalProgressCall = lastLogged >= 0 && lastLogged <= 1;
+
+		//console.log(scrolldata);
+
 		if (visibilityChanged) {
 			if (isVisible) {
 				if (callbackObject[`on${callbackLabel}Visible`])
@@ -170,7 +203,9 @@ class ScrollManager {
 			}
 		}
 
-		if (isVisible) {
+		if (isVisible || needsFinalProgressCall) {
+			// Store last progress value
+			callbackObject.state[`last${callbackLabel}Progress`] = elProgressIs;
 			if (callbackObject[`on${callbackLabel}Progress`])
 				callbackObject[`on${callbackLabel}Progress`](scrolldata);
 		}
@@ -243,8 +278,13 @@ class ScrollManager {
 
 			let key = this.elements.indexOf(el);
 
+			this.elements[key].state = {
+				isVisible: null,
+				isCustomVisible: null,
+			};
 			this.elements[key].in = inProg;
 			this.elements[key].out = outProg;
+			this.elements[key].distance = height;
 			this.elements[key].offsets = {
 				top: top,
 				height: height,
@@ -259,6 +299,7 @@ class ScrollManager {
 
 				this.elements[key].customIn = customValues.in;
 				this.elements[key].customOut = customValues.out;
+				this.elements[key].customDistance = customValues.distance;
 			} else {
 				// No custom settings, match the default
 				this.elements[key].customIn = inProg;
@@ -293,7 +334,7 @@ class ScrollManager {
 			// Make relative to top of the frame
 			inPos += this.getCurrentScrollFrameHeight();
 			// Add the start value
-			inPos += props.start;
+			inPos -= props.start;
 		}
 
 		// How far to travel - default to the viewport plus the height of the object
@@ -304,10 +345,10 @@ class ScrollManager {
 		let inProg = inPos / this.getCurrentScrollDistance();
 		let outProg = outPos / this.getCurrentScrollDistance();
 
-		console.log("custom", inPos, inProg, outProg);
 		return {
 			in: inProg,
 			out: outProg,
+			distance: dist,
 		};
 	};
 	destroy = () => {

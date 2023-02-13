@@ -15,13 +15,6 @@ import { useMount, useUnmount } from "react-use";
 window.TRANSITION_DATA = {
   travelled: 0,
   progress: 0,
-  prev: {
-    bg: "#FF0000",
-  },
-  next: {
-    bg: "#0000FF",
-  },
-  current: {},
 };
 
 const props: UploadProps = {
@@ -31,6 +24,8 @@ const props: UploadProps = {
   },
   showUploadList: false,
 };
+
+let palettes = ["blue", "green", "navy", "yellow"];
 
 export default function App() {
   const [imgUrl, setImgUrl] = useState(null);
@@ -158,219 +153,104 @@ export default function App() {
             </div>
           </div>
         </ViewportProgress>
-        <div
-          style={{
-            background: "#f6d055",
-            width: "90%",
-            margin: "0 auto",
-            padding: "20px",
-            "padding-bottom": "100vh",
-            borderRadius: "40px",
-            fontSize: "5vh",
-            position: "relative",
-            zIndex: 1,
-            boxShadow: `2px 2px 0px rgba(0,0,0,0.2)`,
+        <ScrollElement
+          onVisible={() => {
+            global.SCROLLMANAGER.trigger("background_change", "home");
           }}
-        >
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-        </div>
-        <ViewportProgress
-          //debug={true}
-          ignoreHeight={true}
-          //start={window.innerHeight * 0.5}
-          distance={window.innerHeight * 2}
-          onProgress={({ progress, travelled }) => {
-            window.TRANSITION_DATA.progress = progress;
-            window.TRANSITION_DATA.travelled = travelled;
-            //console.log(progress);
+          onInvisible={() => {
+            //console.log("red invisible");
           }}
         >
           <div
             style={{
-              height: "200vh",
-
+              background: "#f6d055",
               width: "90%",
               margin: "0 auto",
-              marginTop: "-100vh",
+              padding: "20px",
+              "padding-bottom": "100vh",
+              borderRadius: "40px",
+              fontSize: "5vh",
+              position: "relative",
+              zIndex: 1,
+              boxShadow: `2px 2px 0px rgba(0,0,0,0.2)`,
             }}
-          />
-        </ViewportProgress>
-        <div
-          style={{
-            background: "#f6d055",
-            width: "90%",
-            margin: "0 auto",
-            padding: "20px",
-            "padding-bottom": "100vh",
-            borderRadius: "40px",
-            fontSize: "5vh",
-          }}
-        >
-          <p>Lorem ipsum dolor sit amet.</p>
+          >
+            <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
+            <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
+            <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
+            <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
-        </div>
-        <ViewportProgress
-          //debug={true}
-          ignoreHeight={true}
-          //start={window.innerHeight * 0.5}
-          distance={window.innerHeight * 2}
-          onProgress={({ progress, travelled }) => {
-            window.TRANSITION_DATA.progress = progress;
-            window.TRANSITION_DATA.travelled = travelled;
-            //console.log(progress);
-          }}
-        >
-          <div
-            style={{
-              height: "200vh",
+            <p>Lorem ipsum dolor sit amet.</p>
+          </div>
+        </ScrollElement>
+        {palettes.map((palette, ix) => (
+          <>
+            <ScrollElement
+              id={palette}
+              customSettings={{
+                distance: window.innerHeight * 2,
+              }}
+              onCustomVisible={() => {
+                global.SCROLLMANAGER.trigger("foreground_change", palette);
+              }}
+              onCustomProgress={({ progress, travelled }) => {
+                window.TRANSITION_DATA.progress = progress;
+                window.TRANSITION_DATA.travelled = travelled;
 
-              width: "90%",
-              margin: "0 auto",
-              marginTop: "-100vh",
-            }}
-          />
-        </ViewportProgress>
-        <div
-          style={{
-            background: "#f6d055",
-            width: "90%",
-            margin: "0 auto",
-            padding: "20px",
-            "padding-bottom": "100vh",
-            borderRadius: "40px",
-            fontSize: "5vh",
-          }}
-        >
-          <p>Lorem ipsum dolor sit amet.</p>
+                //console.log(palette, window.TRANSITION_DATA.progress);
+              }}
+            >
+              <div
+                style={{
+                  height: "200vh",
+                  width: "100%",
+                  margin: "0 auto",
+                  marginTop: "-100vh",
+                  zIndex: 5,
+                }}
+              />
+            </ScrollElement>
+            <ScrollElement
+              customSettings={{
+                start: window.innerHeight + 100,
+              }}
+              onCustomVisible={() => {
+                global.SCROLLMANAGER.trigger("background_change", palette);
+              }}
+              onInvisible={() => {
+                //console.log("red invisible");
+              }}
+            >
+              <div
+                style={{
+                  background: "#f6d055",
+                  width: "90%",
+                  margin: "0 auto",
+                  padding: "20px",
+                  "padding-bottom": "100vh",
+                  borderRadius: "40px",
+                  fontSize: "5vh",
+                  position: "relative",
+                  zIndex: 1,
+                  boxShadow: `2px 2px 0px rgba(0,0,0,0.2)`,
+                }}
+              >
+                <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
+                <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
+                <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
+                <p>Lorem ipsum dolor sit amet.</p>
 
-          <p>Lorem ipsum dolor sit amet.</p>
-        </div>
-        <ViewportProgress
-          //debug={true}
-          ignoreHeight={true}
-          //start={window.innerHeight * 0.5}
-          distance={window.innerHeight * 2}
-          onProgress={({ progress, travelled }) => {
-            window.TRANSITION_DATA.progress = progress;
-            window.TRANSITION_DATA.travelled = travelled;
-            //console.log(progress);
-          }}
-        >
-          <div
-            style={{
-              height: "200vh",
-
-              width: "90%",
-              margin: "0 auto",
-              marginTop: "-100vh",
-            }}
-          />
-        </ViewportProgress>
-        <div
-          style={{
-            background: "#f6d055",
-            width: "90%",
-            margin: "0 auto",
-            padding: "20px",
-            "padding-bottom": "100vh",
-            borderRadius: "40px",
-            fontSize: "5vh",
-          }}
-        >
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-        </div>
-        <ViewportProgress
-          //debug={true}
-          ignoreHeight={true}
-          //start={window.innerHeight * 0.5}
-          distance={window.innerHeight * 2}
-          onProgress={({ progress, travelled }) => {
-            window.TRANSITION_DATA.progress = progress;
-            window.TRANSITION_DATA.travelled = travelled;
-            //console.log(progress);
-          }}
-        >
-          <div
-            style={{
-              height: "200vh",
-
-              width: "90%",
-              margin: "0 auto",
-              marginTop: "-100vh",
-            }}
-          />
-        </ViewportProgress>
-        <div
-          style={{
-            background: "#f6d055",
-            width: "90%",
-            margin: "0 auto",
-            padding: "20px",
-            "padding-bottom": "100vh",
-            borderRadius: "40px",
-            fontSize: "5vh",
-          }}
-        >
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-
-          <p>Lorem ipsum dolor sit amet.</p>
-        </div>
-        <ViewportProgress
-          //debug={true}
-          ignoreHeight={true}
-          //start={window.innerHeight * 0.5}
-          distance={window.innerHeight * 2}
-          onProgress={({ progress, travelled }) => {
-            window.TRANSITION_DATA.progress = progress;
-            window.TRANSITION_DATA.travelled = travelled;
-            //console.log(progress);
-          }}
-        >
-          <div
-            style={{
-              height: "200vh",
-
-              width: "90%",
-              margin: "0 auto",
-              marginTop: "-100vh",
-            }}
-          />
-        </ViewportProgress>
+                <p>Lorem ipsum dolor sit amet.</p>
+              </div>
+            </ScrollElement>
+          </>
+        ))}
       </div>
     </div>
   );
